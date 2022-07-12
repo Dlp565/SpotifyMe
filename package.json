@@ -21,6 +21,8 @@
     "@discordjs/rest": "^0.5.0",
     "discord-api-types": "^0.36.1",
     "discord.js": "^13.8.1",
-    "dotenv": "^16.0.1"
+    "dotenv": "^16.0.1",
+    "fast-average-color-node": "^2.4.0",
+    "spotify-web-api-node": "^5.0.2"
   }
 }
