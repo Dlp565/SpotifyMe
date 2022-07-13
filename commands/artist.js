@@ -30,31 +30,39 @@ function spotifyToken(){
 
 a = []
 
-function cleanSongObject(data){
+function cleanArtistObject(data){
     if(data == undefined) {
         return null
     }
     ret = {}
     ret.name = data.name
-    ret.artists = []
+    ret.followers = data.followers
     ret.link = data.external_urls.spotify
-    for(artist of data.artists){
-        ret.artists.push(artist.name)
-    }
-    ret.album = data.album.name
-    ret.images = data.album.images
+    
+    ret.genres = data.genres
+    ret.images = data.images
     return ret
 
 }
 
 
 
-function createSongEmbed(data){
+
+function createArtistEmbed(data){
+    console.log(data)
     const embed = new Discord.MessageEmbed();
-    embed.setImage(data.images[0].url)
+    if(data.images.length >= 1){
+        embed.setImage(data.images[0].url)
+    }
     embed.setTitle(data.name)
-    embed.addField('Artist',data.artists[0],inline=true)
-    embed.addField('Album',data.album,inline=true)
+    embed.addField('Followers',String(data.followers.total),inline=true)
+    if(data.genres.length > 0){
+        genreString = data.genres[0]
+        for(let i = 1; i < data.genres.length; i++) {
+            genreString = genreString + ',' + data.genres[i]
+        }
+        embed.addField('Genres',genreString, inline = true)
+    }
     embed.setFooter({text:`Link: ${data.link}`})
     
 
@@ -64,49 +72,31 @@ function createSongEmbed(data){
 
 module.exports ={
     data: new SlashCommandBuilder()
-    .setName('song')
+    .setName('artist')
     .setDescription('Returns searched for song from spotify!')
-    .addStringOption(option => option.setName('song').setDescription('Enter song name'))
     .addStringOption(option => option.setName('artist').setDescription('Enter artist name')),
     async execute(interaction) {
         
-        songName = interaction.options.getString('song')
         artistName = interaction.options.getString('artist')
         
         
         
         
 
-        if(songName == null){
-            await interaction.reply('Please enter a song name')
+        if(artistName == null){
+            await interaction.reply('Please enter an artist')
             return
-        } else if (artistName == null){
-            spotifyApi.searchTracks(`track:${songName}`)
-            .then(function(data){
-                
-                retData = data.body.tracks.items[0]
-                retObject = cleanSongObject(retData)
-                if(retObject == null){
-                    interaction.reply("Song Could not be found!")
-                    return
-                }
-                embed = createSongEmbed(retObject)
-                interaction.reply({embeds:[embed]})
-            }, function(err) {
-                console.error(err)
-            })
         } else {
-            spotifyApi.searchTracks(`track:${songName} artist:${artistName}`)
+            spotifyApi.searchArtists(`${artistName}`)
             .then(function(data){
-                
-                retData = data.body.tracks.items[0]
-                retObject = cleanSongObject(retData)
+                retData = data.body.artists.items[0]
+                retObject = cleanArtistObject(retData)
                 if(retObject == null){
-                    interaction.reply("Song Could not be found!")
-                    return
-                }
-                embed = createSongEmbed(retObject)
-                interaction.reply({embeds:[embed]})
+                     interaction.reply("Song Could not be found!")
+                     return
+                 }
+                 embed = createArtistEmbed(retObject)
+                 interaction.reply({embeds:[embed]})
             }, function(err) {
                 console.error(err)
             })
