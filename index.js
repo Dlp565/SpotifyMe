@@ -2,6 +2,7 @@ const { Client, Collection, Intents } = require('discord.js');
 require('dotenv').config()
 const fs = require('node:fs');
 const path = require('node:path');
+const Sequelize = require('sequelize')
 
 discordToken = process.env.DISCORD_TOKEN
 
@@ -9,6 +10,26 @@ const client = new Client({intents: [Intents.FLAGS.GUILDS]})
 client.commands = new Collection();
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+
+const sequelize = new Sequelize('database','user','password', {
+	host: 'localhost',
+	dialect: 'sqlite',
+	logging: false,
+
+	storage:'database.sqlite',
+})
+
+const Tokens = sequelize.define('tokens',{
+	user: {
+		type: Sequelize.STRING,
+		unique: true,
+	},
+	token: Sequelize.STRING
+})
+
+Tokens.sync()
+
+module.exports = Tokens
 
 
 

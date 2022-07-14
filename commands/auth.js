@@ -7,6 +7,9 @@ var spotifyApi = new SpotifyWebApi({
     redirectUri: 'http://localhost:8080'
 })
 
+const Token = require('../index.js')
+
+
 
 module.exports ={
     data: new SlashCommandBuilder()
@@ -23,20 +26,39 @@ module.exports ={
 
         const urlParams = new URLSearchParams(url);
         code = urlParams.get('http://localhost:8080/?code')
-        console.log(urlParams)
         if(code == null){
             interaction.reply("Invalid url!")
             return
         }
+        
+        //Save refreshtoken to database 
+        
+        //within endpoints that use user oauth do these 2 lines and save new refreshtoken
+        //spotifyApi.setRefreshToken('AQB-GzrrhobM2SpHFDfdeBpofFVsLBbyRnvkqQ6Bj0hI28E-bUDX77EOksxc1WPFItWmeP1PG7R1ZNV6yEILEtZZuxHHeLXkn4-O1G77_opze4Ie58RE6AV-sgG-Oz4tvO4')
+        //spotifyApi.refreshAccessToken()
+        
 
-       
         spotifyApi.authorizationCodeGrant(code).then(
             function(data) {
-                console.log('The token expires in ' + data.body['expires_in']);
-                console.log('The access token is ' + data.body['access_token']);
-                console.log('The refresh token is ' + data.body['refresh_token']);
-            
+                
                 //save access token,refresh token, and user to database for use in other commands 
+
+                console.log(interaction.member.user.id)
+                Token.create({
+                    user: interaction.member.user.id,
+                    token: data.body['refresh_token']
+                }).then(
+                    function(data) {
+                    interaction.reply("Successfully logged in! You can now use all the commands")
+                },function(err){
+                    if(err.errors[0].type == 'unique violation'){
+                        interaction.reply("Successfully logged in! You can now use all the commands")
+                        return
+                    }
+                    interaction.reply("Error occurred while trying to login")
+                })
+
+
               },function(err) {
                 interaction.reply("Authorization failed please try /login again")
               }

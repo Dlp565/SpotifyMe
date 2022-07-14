@@ -25,6 +25,8 @@
     "fast-average-color-node": "^2.4.0",
     "node-url-shortener": "^2.0.3",
     "prettylink": "^1.0.0",
-    "spotify-web-api-node": "^5.0.2"
+    "sequelize": "^6.21.3",
+    "spotify-web-api-node": "^5.0.2",
+    "sqlite3": "^5.0.8"
   }
 }
