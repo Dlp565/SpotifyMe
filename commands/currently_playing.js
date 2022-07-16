@@ -9,7 +9,8 @@ var spotifyApi = new SpotifyWebApi({
     redirectUri: 'http://localhost:8080'
 })
 
-const Token = require('../index.js')
+const Token = require('../index.js');
+const song = require('./song.js');
 
 function cleanSongObject(data){
     if(data == undefined) {
@@ -50,7 +51,8 @@ module.exports ={
     .setDescription('Replies with Currently Playing Song!')
     .addUserOption(option => option.setName('user').setDescription('Enter user name')),
     async execute(interaction) {
-
+        await interaction.deferReply();
+        
         userOption = interaction.options.getUser('user')
         id = interaction.member.user.id
         username = interaction.member.user.username
@@ -70,11 +72,15 @@ module.exports ={
 
             currentTrack = await spotifyApi.getMyCurrentPlayingTrack()
             songObject = cleanSongObject(currentTrack.body.item)
+            if(songObject == null) {
+                await interaction.editReply(`${username} isn't currently listening to anything`)
+                return
+            }
             embed = createSongEmbed(songObject)
-            interaction.reply({embeds:[embed]})
+            interaction.editReply({embeds:[embed]})
             return
         } 
 
-        await interaction.reply(`${username} hasn\'t authorized spotifyme to use their data`)
+        await interaction.editReply(`${username} hasn\'t authorized spotifyme to use their data`)
     },
 };
