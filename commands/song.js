@@ -5,15 +5,11 @@ var Discord = require('discord.js')
 var fac = require('fast-average-color-node')
 
 //Create spotify api object
-var spotifyApi = new SpotifyWebApi({
-    clientId: process.env.SPOTIFY_CLIENT_ID,
-    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    redirectUri: 'http://localhost:8080'
-})
+const {Token,spotifyApi} = require('../index.js');
+
 
 //give spotifyapiobejct client token
 spotifyToken()
-setInterval(spotifyToken,180000)
 
 function spotifyToken(){
     spotifyApi.clientCredentialsGrant().then(
@@ -70,6 +66,9 @@ module.exports ={
     .addStringOption(option => option.setName('artist').setDescription('Enter artist name')),
     async execute(interaction) {
         
+        await spotifyToken()
+
+
         songName = interaction.options.getString('song')
         artistName = interaction.options.getString('artist')
         

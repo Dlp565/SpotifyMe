@@ -3,13 +3,13 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 var SpotifyWebApi = require('spotify-web-api-node')
 var Discord = require('discord.js')
 
-var spotifyApi = new SpotifyWebApi({
-    clientId: process.env.SPOTIFY_CLIENT_ID,
-    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    redirectUri: 'http://localhost:8080'
-})
+// var spotifyApi = new SpotifyWebApi({
+//     clientId: process.env.SPOTIFY_CLIENT_ID,
+//     clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+//     redirectUri: 'http://localhost:8080'
+// })
 
-const Token = require('../index.js');
+const {Token,spotifyApi} = require('../index.js');
 const song = require('./song.js');
 
 function cleanSongObject(data){

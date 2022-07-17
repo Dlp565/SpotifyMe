@@ -10,11 +10,8 @@ var scopes = ['user-modify-playback-state', 'user-read-recently-played','playlis
 
 
 //Create spotify api object
-var spotifyApi = new SpotifyWebApi({
-    clientId: process.env.SPOTIFY_CLIENT_ID,
-    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    redirectUri: 'http://localhost:8080'
-})
+const {Token,spotifyApi} = require('../index.js');
+
 
 module.exports ={
     data: new SlashCommandBuilder()

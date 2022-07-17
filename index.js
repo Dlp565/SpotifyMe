@@ -3,6 +3,10 @@ require('dotenv').config()
 const fs = require('node:fs');
 const path = require('node:path');
 const Sequelize = require('sequelize')
+var SpotifyWebApi = require('spotify-web-api-node')
+require('dotenv').config()
+
+
 
 discordToken = process.env.DISCORD_TOKEN
 
@@ -19,7 +23,7 @@ const sequelize = new Sequelize('database','user','password', {
 	storage:'database.sqlite',
 })
 
-const Tokens = sequelize.define('tokens',{
+const Token = sequelize.define('tokens',{
 	user: {
 		type: Sequelize.STRING,
 		unique: true,
@@ -27,9 +31,16 @@ const Tokens = sequelize.define('tokens',{
 	token: Sequelize.STRING
 })
 
-Tokens.sync()
+Token.sync()
 
-module.exports = Tokens
+var spotifyApi = new SpotifyWebApi({
+    clientId: process.env.SPOTIFY_CLIENT_ID,
+    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+    redirectUri: 'http://localhost:8080'
+})
+
+
+module.exports = {Token,spotifyApi}
 
 
 

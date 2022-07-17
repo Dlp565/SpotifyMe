@@ -2,6 +2,8 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 var SpotifyWebApi = require('spotify-web-api-node')
 var Discord = require('discord.js')
 
+const spawn = require('child_process').spawn
+
 var spotifyApi = new SpotifyWebApi({
     clientId: process.env.SPOTIFY_CLIENT_ID,
     clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
@@ -14,11 +16,13 @@ const { PaginatorEvents, ReactionPaginator, ButtonPaginator  } = require('@psibe
 const Token = require('../index.js');
 const song = require('./song.js');
 
-function cleanSongObject(data){
+function cleanSongObject(data,pos){
+    console.log(data)
     if(data == undefined) {
         return null
     }
     ret = {}
+    ret.pos = pos
     ret.name = data.name
     ret.artists = []
     ret.link = data.external_urls.spotify
@@ -34,7 +38,7 @@ function cleanSongObject(data){
 function createSongEmbed(data){
     const embed = new Discord.MessageEmbed();
     embed.setImage(data.images[0].url)
-    embed.setTitle(data.name)
+    embed.setTitle(data.pos + 1 + ". " + data.name)
     embed.addField('Artist',data.artists[0],inline=true)
     embed.addField('Album',data.album,inline=true)
     embed.setFooter({text:`Link: ${data.link}`})
@@ -60,7 +64,7 @@ module.exports ={
     async execute(interaction) {
         await interaction.deferReply();
         timeframe = interaction.options.get('timeframes')
-        console.log(timeframe)
+        
         id = interaction.member.user.id
         username = interaction.member.user.username
         
@@ -102,12 +106,16 @@ module.exports ={
                 topSongs.push(topTracks.body.items[i])
             }
 
+
+            topSongsClean = {}
             
             for(i = 0; i < 10; i++) {
-                songObject = cleanSongObject(topSongs[i])
+                songObject = cleanSongObject(topSongs[i],i)
+                
                 if(songObject == null) {
                     topSongs.splice(i,1)
                 } else {
+                    topSongsClean[i.toString()] = songObject
                     try {
                     pages.push(createSongEmbed(songObject))
                     } catch (err) {
@@ -117,17 +125,46 @@ module.exports ={
             }
 
             const buttonPaginator = new ButtonPaginator(interaction, { pages });
-            await buttonPaginator.send();   
+            await buttonPaginator.send();
             return    
-            //return reactionPaginator.message;
-                    
+
+            //testing calling python file
+
+            
+            
+           //Below is code for creating new python proccess 
+            
+
+           /*
+            let stringifiedData = JSON.stringify(topSongsClean);
+            
+            const py =spawn('python',['./test.py',stringifiedData])
+
+            resultString = ''
+
+            
+            
+            py.stdout.on('data', function(stdData){
+                console.log(stdData.toString())
+                
+            })
+
+            py.stderr.on('data', function(data)  {
+                console.error(data.toString())
+            })
+
+            py.on('exit',(code) => {
+                console.log("Process quit with code :" +code)
+            })
+
+            */
+            
+
+            //end that code
 
 
             
-
             
-
-            //console.log(topTracks.body.items)
 
         }
 
