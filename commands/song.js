@@ -5,10 +5,11 @@ var Discord = require('discord.js')
 var fac = require('fast-average-color-node')
 
 //Create spotify api object
+
 const {Token,spotifyApi} = require('../index.js');
 
 
-//give spotifyapiobejct client token
+//give spotifyapiobject client token
 spotifyToken()
 
 function spotifyToken(){

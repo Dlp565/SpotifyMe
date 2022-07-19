@@ -5,11 +5,9 @@ var Discord = require('discord.js')
 var fac = require('fast-average-color-node')
 
 //Create spotify api object
-var spotifyApi = new SpotifyWebApi({
-    clientId: process.env.SPOTIFY_CLIENT_ID,
-    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    redirectUri: 'http://localhost:8080'
-})
+
+const {Token,spotifyApi} = require('../index.js');
+
 
 //give spotifyapiobejct client token
 spotifyToken()

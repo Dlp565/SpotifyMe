@@ -20,6 +20,8 @@
     "@discordjs/builders": "^0.15.0",
     "@discordjs/rest": "^0.5.0",
     "@psibean/discord.js-pagination": "^4.0.5",
+    "chart.js": "^3.8.0",
+    "chartjs-node-canvas": "^4.1.6",
     "discord-api-types": "^0.36.1",
     "discord.js": "^13.8.1",
     "discord.js-pagination": "^1.0.3",
@@ -30,6 +32,7 @@
     "node-url-shortener": "^2.0.3",
     "npm": "^8.14.0",
     "prettylink": "^1.0.0",
+    "quickchart-js": "^3.0.1",
     "sequelize": "^6.21.3",
     "spotify-web-api-node": "^5.0.2",
     "sqlite3": "^5.0.8"

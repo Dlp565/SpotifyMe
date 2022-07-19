@@ -4,20 +4,14 @@ var Discord = require('discord.js')
 
 const spawn = require('child_process').spawn
 
-var spotifyApi = new SpotifyWebApi({
-    clientId: process.env.SPOTIFY_CLIENT_ID,
-    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    redirectUri: 'http://localhost:8080'
-})
+
 
 const { PaginatorEvents, ReactionPaginator, ButtonPaginator  } = require('@psibean/discord.js-pagination');
 
 
-const Token = require('../index.js');
-const song = require('./song.js');
+const {Token,spotifyApi} = require('../index.js');
 
 function cleanSongObject(data,pos){
-    console.log(data)
     if(data == undefined) {
         return null
     }

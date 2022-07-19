@@ -1,15 +1,9 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
-const Token = require('../index.js')
 
+const {Token,spotifyApi} = require('../index.js');
 var SpotifyWebApi = require('spotify-web-api-node')
 var Discord = require('discord.js')
-
-var spotifyApi = new SpotifyWebApi({
-    clientId: process.env.SPOTIFY_CLIENT_ID,
-    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    redirectUri: 'http://localhost:8080'
-})
 
 
 function cleanUserObject(data){

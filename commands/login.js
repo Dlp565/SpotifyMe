@@ -10,8 +10,8 @@ var scopes = ['user-modify-playback-state', 'user-read-recently-played','playlis
 
 
 //Create spotify api object
-const {Token,spotifyApi} = require('../index.js');
 
+const {Token,spotifyApi} = require('../index.js');
 
 module.exports ={
     data: new SlashCommandBuilder()
