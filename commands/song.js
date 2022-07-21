@@ -2,11 +2,17 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 var SpotifyWebApi = require('spotify-web-api-node')
 require('dotenv').config()
 var Discord = require('discord.js')
-var fac = require('fast-average-color-node')
+const { getAverageColor } =  require('fast-average-color-node');
+
 
 //Create spotify api object
 
 const {Token,spotifyApi} = require('../index.js');
+// var spotifyApi = new SpotifyWebApi({
+//     clientId: process.env.SPOTIFY_CLIENT_ID,
+//     clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+//     redirectUri: 'http://localhost:8080'
+// })
 
 
 //give spotifyapiobject client token
@@ -81,35 +87,33 @@ module.exports ={
             await interaction.reply('Please enter a song name')
             return
         } else if (artistName == null){
-            spotifyApi.searchTracks(`track:${songName}`)
-            .then(function(data){
-                
-                retData = data.body.tracks.items[0]
-                retObject = cleanSongObject(retData)
-                if(retObject == null){
-                    interaction.reply("Song Could not be found!")
-                    return
-                }
-                embed = createSongEmbed(retObject)
-                interaction.reply({embeds:[embed]})
-            }, function(err) {
-                console.error(err)
-            })
+            data = await spotifyApi.searchTracks(`track:${songName}`)
+            retData = data.body.tracks.items[0]
+            retObject = cleanSongObject(retData)
+            if(retObject == null){
+                interaction.reply("Song Could not be found!")
+                return
+            }
+            embed = createSongEmbed(retObject)
+            const color = await getAverageColor(embed.image.url)
+            embed.setColor(color.hex)
+            interaction.reply({embeds:[embed]})
+            
         } else {
-            spotifyApi.searchTracks(`track:${songName} artist:${artistName}`)
-            .then(function(data){
+            data = await spotifyApi.searchTracks(`track:${songName} artist:${artistName}`)
                 
-                retData = data.body.tracks.items[0]
-                retObject = cleanSongObject(retData)
-                if(retObject == null){
-                    interaction.reply("Song Could not be found!")
-                    return
-                }
-                embed = createSongEmbed(retObject)
-                interaction.reply({embeds:[embed]})
-            }, function(err) {
-                console.error(err)
-            })
+            retData = data.body.tracks.items[0]
+            retObject = cleanSongObject(retData)
+            if(retObject == null){
+                interaction.reply("Song Could not be found!")
+                return
+            }
+            embed = createSongEmbed(retObject)
+            const color = await getAverageColor(embed.image.url)
+            embed.setColor(color.hex)
+            
+            interaction.reply({embeds:[embed]})
+            
         }
 
         //await interaction.reply('Pong!')

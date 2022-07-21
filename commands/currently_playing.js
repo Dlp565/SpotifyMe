@@ -2,11 +2,17 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 
 var SpotifyWebApi = require('spotify-web-api-node')
 var Discord = require('discord.js')
+const { getAverageColor } =  require('fast-average-color-node');
 
 
 
 
 const {Token,spotifyApi} = require('../index.js');
+// var spotifyApi = new SpotifyWebApi({
+//     clientId: process.env.SPOTIFY_CLIENT_ID,
+//     clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+//     redirectUri: 'http://localhost:8080'
+// })
 const song = require('./song.js');
 
 
@@ -76,6 +82,8 @@ module.exports ={
                 return
             }
             embed = createSongEmbed(songObject)
+            const color = await getAverageColor(embed.image.url)
+            embed.setColor(color.hex)
             interaction.editReply({embeds:[embed]})
             return
         } 

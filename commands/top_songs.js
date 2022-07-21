@@ -2,7 +2,6 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 var SpotifyWebApi = require('spotify-web-api-node')
 var Discord = require('discord.js')
 
-const spawn = require('child_process').spawn
 
 
 
@@ -10,6 +9,11 @@ const { PaginatorEvents, ReactionPaginator, ButtonPaginator  } = require('@psibe
 
 
 const {Token,spotifyApi} = require('../index.js');
+// var spotifyApi = new SpotifyWebApi({
+//     clientId: process.env.SPOTIFY_CLIENT_ID,
+//     clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+//     redirectUri: 'http://localhost:8080'
+// })
 
 function cleanSongObject(data,pos){
     if(data == undefined) {

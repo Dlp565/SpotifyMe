@@ -2,11 +2,16 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 var SpotifyWebApi = require('spotify-web-api-node')
 require('dotenv').config()
 var Discord = require('discord.js')
-var fac = require('fast-average-color-node')
+const { getAverageColor } =  require('fast-average-color-node');
 
 //Create spotify api object
 
 const {Token,spotifyApi} = require('../index.js');
+// var spotifyApi = new SpotifyWebApi({
+//     clientId: process.env.SPOTIFY_CLIENT_ID,
+//     clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+//     redirectUri: 'http://localhost:8080'
+// })
 
 
 //give spotifyapiobejct client token
@@ -47,7 +52,6 @@ function cleanArtistObject(data){
 
 
 function createArtistEmbed(data){
-    console.log(data)
     const embed = new Discord.MessageEmbed();
     if(data.images.length >= 1){
         embed.setImage(data.images[0].url)
@@ -85,19 +89,19 @@ module.exports ={
             await interaction.reply('Please enter an artist')
             return
         } else {
-            spotifyApi.searchArtists(`${artistName}`)
-            .then(function(data){
-                retData = data.body.artists.items[0]
-                retObject = cleanArtistObject(retData)
-                if(retObject == null){
-                     interaction.reply("Song Could not be found!")
-                     return
-                 }
-                 embed = createArtistEmbed(retObject)
-                 interaction.reply({embeds:[embed]})
-            }, function(err) {
-                console.error(err)
-            })
+            data = await spotifyApi.searchArtists(`${artistName}`)
+            
+            retData = data.body.artists.items[0]
+            retObject = cleanArtistObject(retData)
+            if(retObject == null){
+                    interaction.reply("Song Could not be found!")
+                    return
+            }
+            embed = createArtistEmbed(retObject)
+            const color = await getAverageColor(embed.image.url)
+            embed.setColor(color.hex)
+            interaction.reply({embeds:[embed]})
+            
         }
 
         //await interaction.reply('Pong!')

@@ -7,21 +7,23 @@ const {Token,spotifyApi} = require('../index.js');
 //     clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
 //     redirectUri: 'http://localhost:8080'
 // })
+
 const QuickChart = require('quickchart-js');
 
 function createChartEmbed(url){
     const embed = new Discord.MessageEmbed();
     embed.setImage(url)
-    embed.setDescription("Chart breaking down artists from your top songs")
-    embed.setTitle('Top Spotify Artists Breakdown')
+    embed.setDescription("Chart breaking down genres of your top artists")
+    embed.setTitle('Top Spotify Genre Breakdown')
     embed.setFooter({text:`Link: ${url}`})
     return embed
 }
 
+
 module.exports ={
     data: new SlashCommandBuilder()
-    .setName('topartists')
-    .setDescription('Replies with artist breakdown of top song!')
+    .setName('topgenres')
+    .setDescription('Replies with Genres of your top artists!')
     .addStringOption(option => option.setName('timeframes')
         .setDescription('timeframe options')
         .setRequired(true)
@@ -49,19 +51,19 @@ module.exports ={
 
             switch(timeframe.value) {
                 case 'short':
-                    topArtists = await spotifyApi.getMyTopTracks(options = {
+                    topArtists = await spotifyApi.getMyTopArtists(options = {
                         time_range: 'short_term',
                         limit:50
                     })
                     break;
                 case 'medium':
-                    topArtists = await spotifyApi.getMyTopTracks(options = {
+                    topArtists = await spotifyApi.getMyTopArtists(options = {
                         time_range: 'medium_term',
                         limit:50
                     })
                     break;
                 default:
-                    topArtists = await spotifyApi.getMyTopTracks(options = {
+                    topArtists = await spotifyApi.getMyTopArtists(options = {
                         time_range: 'long_term',
                         limit: 50
                     })
@@ -69,64 +71,60 @@ module.exports ={
                 
             }
 
-            var artists = {}
+            genreNum = {}
 
-           
-
-            for(song of topArtists.body.items) {
-                currArtist  = song.artists[0].name.toString()
-                if(artists[currArtist] == undefined) {
-                    artists[currArtist] = 1
-                } else {
-                    artists[currArtist] = artists[currArtist] + 1
+            artists = topArtists.body.items
+            for(artist of artists){
+                for(genre of artist.genres) {
+                   if(genreNum[genre] == undefined) {
+                        genreNum[genre] = 1     
+                   } else {
+                    genreNum[genre] = genreNum[genre] + 1
+                   }
                 }
             }
 
-            
-            artistsNames = []
-            counts = []
+            items = Object.keys(genreNum).map(
+                (key) => {return [key,genreNum[key]]}
+            )
 
-            for(var key in artists){
-                artistsNames.push(key)
-                counts.push(artists[key])
-            }
-
+            items.sort(
+                (first, second) => { return second[1] - first[1] }
+              )
             
+            var keys = items.map(
+                (e) => { return e[0] });
+
+            var vals = items.map(
+                (e) => { return e[1] });    
+                
             
             const chart = new QuickChart();
 
             const data = {
-                labels: artistsNames,
+                labels: keys.slice(0,15),
                 datasets: [{
                   label: 'My First Dataset',
-                  data: counts,
+                  data: vals.slice(0,15),
                   hoverOffset: 4
                 }]
               };
 
             chart
             .setConfig({
-                type: 'doughnut',
+                type: 'pie',
                 data: data,
             })
-            .setWidth(800)
-            .setHeight(400);
+            .setWidth(1000)
+            .setHeight(500);
 
             url = chart.getUrl()
-
+            
             embed = createChartEmbed(url)
 
-            //await interaction.editReply(url)
             await interaction.editReply({embeds:[embed]})
-
-           
-            
-            
-
             return
         }
-
-        await interaction.editReply(`${username} hasn't authorized SpotifyMe yet`)
-
+        await interaction.editReply("You need to login using /login")
     },
 };
