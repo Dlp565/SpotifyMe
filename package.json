@@ -4,7 +4,8 @@
   "description": "DiscordBot to view spotify info",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,7 @@
     "@psibean/discord.js-pagination": "^4.0.5",
     "chart.js": "^3.8.0",
     "chartjs-node-canvas": "^4.1.6",
+    "crypto": "^1.0.1",
     "discord-api-types": "^0.36.1",
     "discord.js": "^13.8.1",
     "discord.js-pagination": "^1.0.3",
@@ -36,5 +38,9 @@
     "sequelize": "^6.21.3",
     "spotify-web-api-node": "^5.0.2",
     "sqlite3": "^5.0.8"
+  },
+  "engines": {
+    "node" : "16.16.0",
+    "npm" : "8.11.0"
   }
 }

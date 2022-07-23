@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 var SpotifyWebApi = require('spotify-web-api-node')
-
+var crypto = require('crypto')
 
 const {Token,spotifyApi} = require('../index.js');
 // var spotifyApi = new SpotifyWebApi({
